@@ -18,6 +18,7 @@ recognition.start();
 //capture user speech
 function onSpeak(event){
     const msg = event.results[0][0].transcript;
+    
     writeMessage(msg);
     checkNumber(msg);
     console.log(msg);
@@ -37,32 +38,23 @@ function writeMessage(msg){
 }
 
 // Check msg against the secret number
-function checkNumber() {
-    const num = Number(msg);
+function checkNumber(msg) {
+    const cleanMsg = String(msg).trim();
+    let num = Number(cleanMsg);
 
     // Edge cases
     // Update the value of num if it's a single-digit number
-    if (msg === 'one' || msg === 'won') {
-        num = 1;
-    } else if (msg === 'two') {
-        num = 2;
-    } else if (msg === 'three') {
-        num = 3;
-    } else if (msg === 'four') {
-        num = 4;
-    } else if (msg === 'five') {
-        num = 5;
-    } else if (msg === 'six') {
-        num = 6;
-    } else if (msg === 'seven') {
-        num = 7;
-    } else if (msg === 'eight') {
-        num = 8;
-    } else if (msg === 'nine') {
-        num = 9;
-    }
+    const wordMap = {
+        'one': 1, 'won': 1, 'two': 2, 'to': 2, 'too': 2, 
+        'three': 3, 'four': 4, 'for': 4, 'five': 5, 
+        'six': 6, 'seven': 7, 'eight': 8, 'ate': 8, 'nine': 9
+    };
 
     // check if spoken content is a valid number
+    if (Number.isNaN(num)){
+        num = wordMap[msg.toLowerCase()] || NaN;
+    }
+
     if(Number.isNaN(num)){
         const div = document.createElement('div');
         div.textContent = 'That is not a valid number';
@@ -81,7 +73,8 @@ function checkNumber() {
     //check the number and provide feedback
     if(num === randomNum){
         const h2 = document.createElement('h2');
-        div.textContent = `Congrats! You have guessed the number! It was ${num}`;
+        h2.textContent = `Congrats! You have guessed the number! It was ${num}`;
+
         const button = document.createElement('button');
         button.classList.add('play-again');
         button.id='play-again';
@@ -89,7 +82,6 @@ function checkNumber() {
         // Add listener and handler to button
         button.addEventListener('click', () => window.location.reload());
 
-        // Clear out innerHTML of msgEl
         msgEl.append(h2,button);
     } else if (num > randomNum){
         const div= document.createElement('div');
@@ -101,6 +93,17 @@ function checkNumber() {
         msgEl.append(div);
     }
 }
+
+// Event delegation for the dynamic button
+document.body.addEventListener('click', e => {
+    if (e.target.id === 'play-again') {
+        window.location.reload();
+    }
+});
+
+
+// Listen for the result
+recognition.addEventListener('result', onSpeak);
 
 // At end of the SpeechRecognition service, start it again.
 recognition.addEventListener('end', () => recognition.start());
