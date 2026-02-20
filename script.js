@@ -6,10 +6,11 @@ function generateRandomNumber() {
 }
 
 const randomNum = generateRandomNumber();
+console.log('Number:', randomNum);
 
 window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-const recognition = new window.SpeechRecognition();
+let recognition = new window.SpeechRecognition();
 
 // start recognition and game
 recognition.start();
@@ -19,6 +20,7 @@ function onSpeak(event){
     const msg = event.results[0][0].transcript;
     writeMessage(msg);
     checkNumber(msg);
+    console.log(msg);
 }
 
 // listen to and handle the speech event
@@ -39,20 +41,31 @@ function checkNumber() {
     const num = Number(msg);
 
     // Edge cases
-    if (msg === 'one'){
-        console.log('adjusting one to 1');
-        msg = 1;
-    }
-    else if (msg === 'two'){
-        console.log('adjusting two to 2');
-        msg = 2;
+    // Update the value of num if it's a single-digit number
+    if (msg === 'one' || msg === 'won') {
+        num = 1;
+    } else if (msg === 'two') {
+        num = 2;
+    } else if (msg === 'three') {
+        num = 3;
+    } else if (msg === 'four') {
+        num = 4;
+    } else if (msg === 'five') {
+        num = 5;
+    } else if (msg === 'six') {
+        num = 6;
+    } else if (msg === 'seven') {
+        num = 7;
+    } else if (msg === 'eight') {
+        num = 8;
+    } else if (msg === 'nine') {
+        num = 9;
     }
 
     // check if spoken content is a valid number
     if(Number.isNaN(num)){
         const div = document.createElement('div');
         div.textContent = 'That is not a valid number';
-        msgEl.innerHTML = '';
         msgEl.append(div);
         return;
     }
@@ -61,7 +74,6 @@ function checkNumber() {
     if (num < 1 || num > 100){
         const div = document.createElement('div');
         div.textContent = 'Number must be between 1 and 100';
-        msgEl.innerHTML = '';
         msgEl.append(div);
         return;
     }
@@ -78,19 +90,14 @@ function checkNumber() {
         button.addEventListener('click', () => window.location.reload());
 
         // Clear out innerHTML of msgEl
-        msgEl.innerHTML = '';
         msgEl.append(h2,button);
     } else if (num > randomNum){
         const div= document.createElement('div');
         div.textContent = 'GO LOWER';
-        
-        msgEl.innerHTML = '';
         msgEl.append(div);
     } else { //if (num < randomNum)
         const div= document.createElement('div');
         div.textContent = 'GO HIGHER';
-
-        msgEl.innerHTML = '';
         msgEl.append(div);
     }
 }
