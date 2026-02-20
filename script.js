@@ -18,8 +18,7 @@ recognition.start();
 //capture user speech
 function onSpeak(event){
     const msg = event.results[0][0].transcript;
-    
-    writeMessage(msg);
+
     checkNumber(msg);
     console.log(msg);
 }
@@ -61,6 +60,8 @@ function checkNumber(msg) {
         msgEl.append(div);
         return;
     }
+    // if we know its a number, show it in the DOM
+    writeMessage(msg);
 
     //Check if it's in range
     if (num < 1 || num > 100){
